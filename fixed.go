@@ -281,6 +281,28 @@ func (f Fixed) Floor(n int) Fixed {
 	return Fixed{fp: fp}
 }
 
+func (f Fixed) Ceil(n int) Fixed {
+	if f.IsNaN() {
+		return NaN
+	}
+
+	fraction := f.fp % scale
+	if n > nPlaces {
+		n = nPlaces
+	}
+	factor := int64(math.Pow10(nPlaces - n))
+	f0 := fraction / factor
+	f0 = f0 * factor
+	fraction1 := f.fp % factor
+	if fraction1 > 0 {
+		f0 += factor
+	}
+	intpart := f.fp - fraction
+	fp := intpart + f0
+
+	return Fixed{fp: fp}
+}
+
 // Equal returns true if the f == f0. If either operand is NaN, false is returned. Use IsNaN() to test for NaN
 func (f Fixed) Equal(f0 Fixed) bool {
 	if f.IsNaN() || f0.IsNaN() {

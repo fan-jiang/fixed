@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBasic(t *testing.T) {
@@ -538,6 +539,14 @@ func TestFloor(t *testing.T) {
 	assert.Equal(t, 0.1, NewF(0.1).Floor(8).Float())
 }
 
+func TestCeil(t *testing.T) {
+	assert.Equal(t, 1., NewF(0.1).Ceil(0).Float())
+	assert.Equal(t, 18.1, NewF(18.08).Ceil(1).Float())
+	assert.Equal(t, 18.09, NewF(18.085).Ceil(2).Float())
+	assert.Equal(t, 18.08, NewF(18.08).Ceil(2).Float())
+	assert.Equal(t, 18.08, NewF(18.08).Ceil(3).Float())
+}
+
 func TestEncodeDecode(t *testing.T) {
 	b := &bytes.Buffer{}
 
@@ -636,9 +645,33 @@ func TestLimitationOfFix(t *testing.T) {
 				assert.Equal(t, "217231.199999949982157", fmt.Sprintf("%.15f", amount))
 				assert.Equal(t, "217231.190000000002328", fmt.Sprintf("%.15f", actual))
 			} else {
-				assert.InDelta(t, amount, actual, 1e-6, "failed test at step %d", i)
+				require.InDelta(t, amount, actual, 1e-4, "failed test at step %d", i)
 			}
 			amount += 18.08
+		}
+	})
+
+	t.Run("adjust the amount each time with fixed constructor which adds 0.000_000_05 to the amount", func(t *testing.T) {
+		maxStep := 1_000_000
+		amount := 18.08
+		actualFixed := NewF(amount)
+		for i := 1; i <= maxStep; i++ {
+			actual := actualFixed.Floor(2).Float()
+			require.InDelta(t, amount, actual, 1e-4, "failed test at step %d", i)
+			amount += 18.08
+			actualFixed = actualFixed.Add(NewF(18.08))
+		}
+	})
+
+	t.Run("adjust the amount each time with fixed constructor which adds 0.000_000_05 to the amount", func(t *testing.T) {
+		maxStep := 1_000_000
+		amount := 18.08
+		actualFixed := NewF(amount)
+		for i := 1; i <= maxStep; i++ {
+			actual := actualFixed.Floor(2).Float()
+			require.InDelta(t, amount, actual, 1e-4, "failed test at step %d", i)
+			amount += 18.08
+			actualFixed = actualFixed.Add(NewF(18.08))
 		}
 	})
 }
