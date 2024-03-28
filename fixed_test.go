@@ -1,4 +1,4 @@
-package fixed_test
+package fixed
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"math"
 	"testing"
 
-	. "github.com/robaho/fixed"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBasic(t *testing.T) {
@@ -523,6 +523,18 @@ func TestRound(t *testing.T) {
 		t.Error("should be equal", f1, "2234.57")
 	}
 
+}
+
+func TestFloor(t *testing.T) {
+	assert.Equal(t, 18., NewF(18.08).Floor(1).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(1).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(2).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(3).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(4).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(5).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(6).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(7).Float())
+	assert.Equal(t, 0.1, NewF(0.1).Floor(8).Float())
 }
 
 func TestEncodeDecode(t *testing.T) {
