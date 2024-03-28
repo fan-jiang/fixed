@@ -3,6 +3,7 @@ package fixed
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"math"
 	"testing"
 
@@ -623,4 +624,21 @@ func TestJSON_NaN(t *testing.T) {
 	if !j.F.IsNaN() {
 		t.Error("did not decode NaN", j.F, f)
 	}
+}
+
+func TestLimitationOfFix(t *testing.T) {
+	t.Run("adjust the end result of amount", func(t *testing.T) {
+		failureStep := 12015
+		amount := 18.08
+		for i := 1; i <= failureStep; i++ {
+			actual := NewF(amount).Floor(2).Float()
+			if i == failureStep { // real value should be 18.08*12015=217231.20
+				assert.Equal(t, "217231.199999949982157", fmt.Sprintf("%.15f", amount))
+				assert.Equal(t, "217231.190000000002328", fmt.Sprintf("%.15f", actual))
+			} else {
+				assert.InDelta(t, amount, actual, 1e-6, "failed test at step %d", i)
+			}
+			amount += 18.08
+		}
+	})
 }
