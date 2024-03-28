@@ -2,9 +2,10 @@ package fixed
 
 import (
 	"bytes"
-	"github.com/shopspring/decimal"
 	"math/big"
 	"testing"
+
+	"github.com/shopspring/decimal"
 )
 
 func BenchmarkAddFixed(b *testing.B) {
@@ -147,7 +148,7 @@ func BenchmarkStringFixed(b *testing.B) {
 	f0 := NewF(123456789.12345)
 
 	for i := 0; i < b.N; i++ {
-		f0.String()
+		_ = f0.String()
 	}
 }
 func BenchmarkStringNFixed(b *testing.B) {
@@ -161,21 +162,21 @@ func BenchmarkStringDecimal(b *testing.B) {
 	f0 := decimal.NewFromFloat(123456789.12345)
 
 	for i := 0; i < b.N; i++ {
-		f0.String()
+		_ = f0.String()
 	}
 }
 func BenchmarkStringBigInt(b *testing.B) {
 	f0 := big.NewInt(123456789)
 
 	for i := 0; i < b.N; i++ {
-		f0.String()
+		_ = f0.String()
 	}
 }
 func BenchmarkStringBigFloat(b *testing.B) {
 	f0 := big.NewFloat(123456789.12345)
 
 	for i := 0; i < b.N; i++ {
-		f0.String()
+		_ = f0.String()
 	}
 }
 
@@ -185,6 +186,6 @@ func BenchmarkWriteTo(b *testing.B) {
 	buf := new(bytes.Buffer)
 
 	for i := 0; i < b.N; i++ {
-		f0.WriteTo(buf)
+		_ = f0.WriteTo(buf)
 	}
 }
