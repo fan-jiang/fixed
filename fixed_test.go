@@ -651,7 +651,7 @@ func TestLimitationOfFix(t *testing.T) {
 		}
 	})
 
-	t.Run("adjust the amount each time with fixed constructor which adds 0.000_000_05 to the amount", func(t *testing.T) {
+	t.Run("Output Floor: adjust the amount each time with fixed constructor which adds 0.000_000_05 to the amount", func(t *testing.T) {
 		maxStep := 1_000_000
 		amount := 18.08
 		actualFixed := NewF(amount)
@@ -663,12 +663,25 @@ func TestLimitationOfFix(t *testing.T) {
 		}
 	})
 
-	t.Run("adjust the amount each time with fixed constructor which adds 0.000_000_05 to the amount", func(t *testing.T) {
+	// Todo: understand why ceil won't get effected by epsilon
+	t.Run("Output as Ceil: adjust the amount each time with fixed constructor which adds 0.000_000_05 to the amount", func(t *testing.T) {
 		maxStep := 1_000_000
 		amount := 18.08
 		actualFixed := NewF(amount)
 		for i := 1; i <= maxStep; i++ {
-			actual := actualFixed.Floor(2).Float()
+			actual := actualFixed.Ceil(2).Float()
+			require.InDelta(t, amount, actual, 1e-4, "failed test at step %d", i)
+			amount += 18.08
+			actualFixed = actualFixed.Add(NewF(18.08))
+		}
+	})
+
+	t.Run("Output as Round: adjust the amount each time with fixed constructor which adds 0.000_000_05 to the amount", func(t *testing.T) {
+		maxStep := 1_000_000
+		amount := 18.08
+		actualFixed := NewF(amount)
+		for i := 1; i <= maxStep; i++ {
+			actual := actualFixed.Round(2).Float()
 			require.InDelta(t, amount, actual, 1e-4, "failed test at step %d", i)
 			amount += 18.08
 			actualFixed = actualFixed.Add(NewF(18.08))
